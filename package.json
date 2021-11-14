@@ -5,6 +5,7 @@
   "main": "server/index.js",
   "scripts": {
     "test": "jest",
+    "test-watch": "jest --watch",
     "prebuild": "rm -rf dist",
     "build-configs": "babel webpack.config.babel.js --out-dir dist",
     "build-db": "cp knexfile.js dist && NODE_ENV=production knex migrate:latest",
@@ -52,12 +53,14 @@
     "mini-css-extract-plugin": "^1.6.0",
     "objection": "^2.2.15",
     "objection-unique": "^1.2.2",
+    "on-change": "^4.0.0",
     "pino-pretty": "^5.0.2",
     "point-of-view": "^4.14.0",
     "pug": "^3.0.2",
     "qs": "^6.10.1",
     "sqlite3": "^5.0.2",
-    "webpack": "^5.38.1"
+    "webpack": "^5.38.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.3",
