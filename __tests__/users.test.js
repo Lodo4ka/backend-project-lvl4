@@ -62,6 +62,51 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
+  it('update', async () => {
+    const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    const params = {
+      email: 'test@mail.com',
+      password: '123',
+    };
+    const response = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('user', { id: user.id }),
+      payload: {
+        data: params,
+      },
+    });
+    expect(response.statusCode).toBe(302);
+    const expected = {
+      ..._.omit(params, 'password'),
+      passwordDigest: encrypt(params.password),
+    };
+    const updatedUser = await models.user.query().findOne({ email: params.email });
+    expect(updatedUser).toMatchObject(expected);
+  });
+
+  it('delete', async () => {
+    const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    const response = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id: user.id }),
+    });
+    expect(response.statusCode).toBe(302);
+    const userDeleted = await models.user.query().findById(user.id);
+    expect(userDeleted).toBeUndefined();
+  });
+
+  it('edit', async () => {
+    const user = testData.users.existing;
+    const { id: userID } = await models.user.query().findOne({ email: user.email });
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('userEdit', { id: userID }),
+    });
+    expect(response.statusCode).toBe(200);
+    const userExisting = await models.user.query().findById(userID);
+    expect(userExisting.email).toEqual(user.email);
+  });
+
   afterEach(async () => {
     // после каждого теста откатываем миграции
     await knex.migrate.rollback();
