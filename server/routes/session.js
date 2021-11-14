@@ -19,6 +19,7 @@ export default (app) => {
         };
         return reply.render('session/new', { signInForm, errors });
       }
+      req.session.set('user', user);
       await req.logIn(user);
       req.flash('success', i18next.t('flash.session.create.success'));
       return reply.redirect(app.reverse('root'));
