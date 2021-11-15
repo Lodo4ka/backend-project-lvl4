@@ -32,6 +32,7 @@ module.exports = {
     layouts: {
       application: {
         users: 'Пользователи',
+        statuses: 'Статусы',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -51,6 +52,16 @@ module.exports = {
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
+        },
+      },
+      statuses: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+        titleUpdate: 'Изменение статуса',
+        new: {
+          create: 'Создать статус',
+          title: 'Создание статуса',
         },
       },
       welcome: {
