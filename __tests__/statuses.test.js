@@ -40,15 +40,40 @@ describe('test statuses CRUD', () => {
 
   it('POST /statuses', async () => {
     const updatedData = testData.statuses.new;
-    const responseCreated = await app.inject({
+    const response = await app.inject({
       method: 'POST',
       url: app.reverse('statusCreate'),
       payload: {
         data: updatedData,
       },
     });
-    expect(responseCreated.statusCode).toBe(302);
+    expect(response.statusCode).toBe(302);
     const status = await models.status.query().findOne({ name: updatedData.name });
+    expect(status).toMatchObject(updatedData);
+  });
+
+  it('GET status/:id/edit', async () => {
+    const { id } = testData.statuses.existing;
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('editStatus', { id }),
+    });
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('PATCH status/:id', async () => {
+    const { id } = testData.statuses.existing;
+    const updatedData = { name: 'new status' };
+    const response = await app.inject({
+      method: 'PATCH',
+      url: app.reverse('updateStatus', { id }),
+      payload: {
+        data: updatedData,
+      },
+    });
+    expect(response.statusCode).toBe(302);
+
+    const status = await models.status.query().findById(id);
     expect(status).toMatchObject(updatedData);
   });
 

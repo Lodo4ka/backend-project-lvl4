@@ -72,6 +72,11 @@ module.exports = {
           more: 'Узнать Больше',
         },
       },
+      actions: {
+        edit: 'Изменить',
+        delete: 'Удалить',
+        submit: 'Создать',
+      },
     },
   },
 };

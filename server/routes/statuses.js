@@ -19,8 +19,28 @@ export default (app) => {
         reply.redirect(app.reverse('statuses'));
       } catch (error) {
         req.flash('error', i18next.t('flash.status.create.error'));
-        const status = new app.objection.models.taskStatus().$set(req.body.data);
+        const status = new app.objection.models.status().$set(req.body.data);
         reply.render(app.reverse('newStatus'), { status, errors: error.data });
+        reply.code(422);
+      }
+    })
+    .get('/status/:id/edit', { name: 'editStatus' }, async (req, reply) => {
+      const { id } = req.params;
+      const status = await app.objection.models.status.query().findById(id);
+      reply.render('statuses/edit', { status });
+    })
+    .patch('/statuses/:id', { name: 'updateStatus' }, async (req, reply) => {
+      const { id } = req.params;
+      const currentStatus = await app.objection.models.status.query().findById(id);
+      try {
+        await currentStatus.$query().update(req.body.data);
+        req.flash('info', i18next.t('flash.status.update.success'));
+        reply.redirect(app.reverse('statuses'));
+      } catch (err) {
+        req.flash('error', i18next.t('flash.status.update.error'));
+        const status = new app.objection.models.status()
+          .$set({ ...currentStatus, ...req.body.data });
+        reply.render('statuses/edit', { status, errors: err.data });
         reply.code(422);
       }
     });
