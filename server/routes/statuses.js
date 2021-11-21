@@ -15,7 +15,8 @@ export default (app) => {
     .post('/statuses', { name: 'statusCreate', preValidation: app.authenticate }, async (req, reply) => {
       try {
         const data = await app.objection.models.status.fromJson(req.body.data);
-        await app.objection.models.status.query().insert(data); req.flash('info', i18next.t('flash.status.create.success'));
+        await app.objection.models.status.query().insert(data);
+        req.flash('info', i18next.t('flash.status.create.success'));
         reply.redirect(app.reverse('statuses'));
       } catch (error) {
         req.flash('error', i18next.t('flash.status.create.error'));

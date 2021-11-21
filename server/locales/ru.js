@@ -28,11 +28,27 @@ module.exports = {
         },
       },
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
+      task: {
+        create: {
+          success: 'Задача успешно создана',
+          error: 'Не удалось создать задачу',
+        },
+        update: {
+          success: 'Задача успешно обновлена',
+          error: 'Не удалось обновить задачу',
+        },
+        delete: {
+          success: 'Задача успешно удалена',
+        },
+        showError: 'Нет задачи с такими параметрами',
+        authError: 'Задачу может удалить только её автор',
+      },
     },
     layouts: {
       application: {
         users: 'Пользователи',
         statuses: 'Статусы',
+        tasks: 'Задачи',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -77,6 +93,28 @@ module.exports = {
         delete: 'Удалить',
         submit: 'Создать',
       },
+      tasks: {
+        create: 'Создать задачу',
+        createTitle: 'Создание задачи',
+        editTitle: 'Изменение задачи',
+        id: 'ID',
+        name: 'Наименование',
+        status: 'Статус',
+        author: 'Автор',
+        executor: 'Исполнитель',
+        labels: 'Метки',
+        createdAt: 'Дата создания',
+        filter: 'Показать',
+      },
+    },
+    form: {
+      firstName: 'Имя',
+      lastName: 'Фамилия',
+      email: 'Email',
+      password: 'Пароль',
+      name: 'Наименование',
+      description: 'Описание',
+      status: 'Статус',
     },
   },
 };

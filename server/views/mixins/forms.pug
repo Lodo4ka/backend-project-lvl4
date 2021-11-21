@@ -1,5 +1,7 @@
 - const getInputName = (property) => `data[${property}]`
 - const getInputId = (property) => `data_${property}`
+- const getLengthCount = (err) => (err.message.match(/\d+/) && err.message.match(/\d+/)[0]) || ''
+- const names = { statusId: 'status', executorId: 'executor', labelIds: 'labels' }
 
 mixin formFor(entity = null)
   form&attributes(attributes)
@@ -24,6 +26,44 @@ mixin input(entity, propertyName, errors = {})
 
 mixin submit(form = null)
   input(class='btn btn-primary' type='submit')&attributes(attributes)
+
+mixin textarea(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (!propertyErrors ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  - name = getInputName(propertyName)
+  .form-group(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= t(`form.${propertyName}`)
+    textarea(
+      id= inputId
+      name= name
+      class=classLine
+    )&attributes(attributes)= _.get(entity, propertyName, '')
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin select(entity, propertyName, errors = {}, items, multiple = false)
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (!propertyErrors ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  - name = getInputName(propertyName)
+  - entityName = entity.constructor.name.toLowerCase()
+  - selectedOptions = entity[propertyName] ? [entity[propertyName]].flat().map((item) => item.id ? Number(item.id) : Number(item)) : []
+  .form-group(class="mb-3")
+    label(for=inputId)= t(`views.${entityName}s.${propertyName in names ? names[propertyName] : propertyName}`)
+    select.form-control(
+      id= inputId,
+      name=name,
+      multiple=multiple
+      class=classLine
+    )
+      each item in items
+        - isSelect = _.includes(selectedOptions, item.id)
+        option(value=item.id, selected= isSelect)= item.name
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
 mixin buttonTo(action, method)
   form(action=action, method="post")
