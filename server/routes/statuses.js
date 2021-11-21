@@ -4,7 +4,7 @@ import i18next from 'i18next';
 
 export default (app) => {
   app
-    .get('/statuses', { name: 'statuses' }, async (req, reply) => {
+    .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (req, reply) => {
       const statuses = await app.objection.models.status.query();
       reply.render('statuses/index', { statuses });
     })
@@ -12,7 +12,7 @@ export default (app) => {
       const status = await new app.objection.models.status();
       reply.render('statuses/new', { status });
     })
-    .post('/statuses', { name: 'statusCreate' }, async (req, reply) => {
+    .post('/statuses', { name: 'statusCreate', preValidation: app.authenticate }, async (req, reply) => {
       try {
         const data = await app.objection.models.status.fromJson(req.body.data);
         await app.objection.models.status.query().insert(data); req.flash('info', i18next.t('flash.status.create.success'));
@@ -24,7 +24,7 @@ export default (app) => {
         reply.code(422);
       }
     })
-    .get('/status/:id/edit', { name: 'editStatus' }, async (req, reply) => {
+    .get('/status/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
       const { id } = req.params;
       const status = await app.objection.models.status.query().findById(id);
       reply.render('statuses/edit', { status });

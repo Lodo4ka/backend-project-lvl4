@@ -1,12 +1,13 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, signIn } from './helpers/index.js';
 
 describe('test statuses CRUD', () => {
   let app;
   let knex;
   let models;
+  let cookie;
   const testData = getTestData();
 
   beforeAll(async () => {
@@ -18,12 +19,14 @@ describe('test statuses CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
+    cookie = await signIn(app, testData.users.existing);
   });
 
   it('GET /statuses', async () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('statuses'),
+      cookies: cookie,
     });
 
     expect(response.statusCode).toBe(200);
@@ -33,6 +36,7 @@ describe('test statuses CRUD', () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('newStatus'),
+      cookies: cookie,
     });
 
     expect(response.statusCode).toBe(200);
@@ -43,6 +47,7 @@ describe('test statuses CRUD', () => {
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('statusCreate'),
+      cookies: cookie,
       payload: {
         data: updatedData,
       },
@@ -57,6 +62,7 @@ describe('test statuses CRUD', () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('editStatus', { id }),
+      cookies: cookie,
     });
     expect(response.statusCode).toBe(200);
   });
@@ -67,6 +73,7 @@ describe('test statuses CRUD', () => {
     const response = await app.inject({
       method: 'PATCH',
       url: app.reverse('updateStatus', { id }),
+      cookies: cookie,
       payload: {
         data: updatedData,
       },
