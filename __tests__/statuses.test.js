@@ -29,6 +29,29 @@ describe('test statuses CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('GET /status/new', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('newStatus'),
+    });
+
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('POST /statuses', async () => {
+    const updatedData = testData.statuses.new;
+    const responseCreated = await app.inject({
+      method: 'POST',
+      url: app.reverse('statusCreate'),
+      payload: {
+        data: updatedData,
+      },
+    });
+    expect(responseCreated.statusCode).toBe(302);
+    const status = await models.status.query().findOne({ name: updatedData.name });
+    expect(status).toMatchObject(updatedData);
+  });
+
   afterEach(async () => {
     // после каждого теста откатываем миграции
     await knex.migrate.rollback();

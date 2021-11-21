@@ -62,6 +62,7 @@ module.exports = {
         new: {
           create: 'Создать статус',
           title: 'Создание статуса',
+          submit: 'Создать',
         },
       },
       welcome: {

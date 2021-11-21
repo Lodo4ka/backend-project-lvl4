@@ -8,8 +8,8 @@ block content
                 th= t('views.statuses.name')
                 th= t('views.statuses.createdAt')
         tbody
-            // each status in statuses
-            //     tr
-            //         td= status.id
-            //         td= status.name
-            //         td= formatDate(status.createdAt)
+            each status in statuses
+                tr
+                    td= status.id
+                    td= status.name
+                    td= formatDate(status.createdAt)
