@@ -4,10 +4,12 @@
     "description": "do refactoring",
     "statusId": 7,
     "creatorId": 9,
+    "executorId": 9,
     "id": 2
   },
   {
     "name": "prepare environment",
+    "description": "lorem",
     "statusId": 7,
     "creatorId": 7,
     "executorId": 9,

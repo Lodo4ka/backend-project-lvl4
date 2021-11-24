@@ -8,6 +8,18 @@ export default class Task extends Model {
     return 'tasks';
   }
 
+  $parseJson(json, opt) {
+    const parsed = super.$parseJson(json, opt);
+    return {
+      ...(parsed.id && { id: Number(parsed.id) }),
+      ...(parsed.name && { name: parsed.name.trim() }),
+      ...(parsed.description && { description: parsed.description.trim() }),
+      ...(parsed.statusId && { statusId: Number(parsed.statusId) }),
+      ...(parsed.executorId && { executorId: Number(parsed.executorId) }),
+      ...(parsed.creatorId && { creatorId: Number(parsed.creatorId) }),
+    };
+  }
+
   static get jsonSchema() {
     return {
       type: 'object',

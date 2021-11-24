@@ -55,6 +55,11 @@ module.exports = {
       },
     },
     views: {
+      manage: {
+        edit: 'Изменить',
+        delete: 'Удалить',
+        submit: 'Создать',
+      },
       session: {
         new: {
           signIn: 'Вход',

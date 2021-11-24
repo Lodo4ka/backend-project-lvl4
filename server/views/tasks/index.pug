@@ -21,7 +21,7 @@ block content
                     td= task.status.name
                     td= task.creator.name
                     if task.executor
-                        td= _.get(task.executor, 'name')
+                        td= _.get(task.executor, 'email')
                     else
                         td
                     td= formatDate(task.createdAt)

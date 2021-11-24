@@ -28,7 +28,6 @@ describe('test tasks CRUD', () => {
       url: app.reverse('tasks'),
       cookies: cookie,
     });
-
     expect(response.statusCode).toBe(200);
   });
 
@@ -59,6 +58,16 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(302);
     const task = await models.task.query().findOne({ name: updatedTaskData.name });
     expect(task).toMatchObject(updatedTaskData);
+  });
+
+  it('GET /tasks/:id/edit', async () => {
+    const existedTask = testData.tasks.existing;
+    const response = await app.inject({
+      method: 'GET',
+      cookies: cookie,
+      url: app.reverse('editTask', { id: existedTask.id }),
+    });
+    expect(response.statusCode).toBe(200);
   });
 
   afterEach(async () => {
