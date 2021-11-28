@@ -69,7 +69,7 @@ describe('labels CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
-  it('PATCH label', async () => {
+  it('PATCH /labels/:id', async () => {
     const updatedData = { name: 'fix' };
     const response = await app.inject({
       method: 'PATCH',
@@ -85,7 +85,7 @@ describe('labels CRUD', () => {
     expect(label).toMatchObject({ ...testData.labels.existing, ...updatedData });
   });
 
-  it('delete label', async () => {
+  it('delete /labels/:id', async () => {
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteLabel', { id: testData.labels.existing.id }),
