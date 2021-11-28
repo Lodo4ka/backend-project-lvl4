@@ -17,6 +17,8 @@ html(lang="en")
           .container-fluid
             ul.navbar-nav.mr-auto
               li.nav-item
+                a.nav-link(href=route('labels'))= t('layouts.application.labels')
+              li.nav-item
                 a.nav-link(href=route('users'))= t('layouts.application.users')
               li.nav-item
                 a.nav-link(href=route('statuses'))= t('layouts.application.statuses')

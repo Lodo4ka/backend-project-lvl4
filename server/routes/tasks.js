@@ -99,17 +99,15 @@ export default (app) => {
       } catch (err) {
         req.flash('error', i18next.t('flash.task.update.error'));
         const task = new app.objection.models.task().$set({ ...oldTask, ...req.body.data });
-          const [users, statuses, labels] = await Promise.all([ // eslint-disable-line
+        const [users, statuses] = await Promise.all([
           app.objection.models.user.query(),
           app.objection.models.taskStatus.query(),
-          app.objection.models.label.query(),
         ]);
 
         reply.render('tasks/edit', {
           task,
           users,
           statuses,
-          labels,
           errors: err.data,
         });
       }

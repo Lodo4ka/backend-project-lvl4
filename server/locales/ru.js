@@ -43,6 +43,20 @@ module.exports = {
         showError: 'Нет задачи с такими параметрами',
         authError: 'Задачу может удалить только её автор',
       },
+      labels: {
+        create: {
+          success: 'Метка успешно создана',
+          error: 'Не удалось создать метку',
+        },
+        delete: {
+          success: 'Метка успешно удалена',
+          error: 'Не удалось удалить метку',
+        },
+        update: {
+          success: 'Метка успешно изменена',
+          error: 'Не удалось изменить метку',
+        },
+      },
     },
     layouts: {
       application: {
@@ -52,9 +66,21 @@ module.exports = {
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
+        labels: 'Метки',
+
       },
     },
     views: {
+      labels: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+        titleUpdate: 'Изменение метки',
+        new: {
+          create: 'Создать метку',
+          title: 'Создание метки',
+        },
+      },
       manage: {
         edit: 'Изменить',
         delete: 'Удалить',

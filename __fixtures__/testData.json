@@ -43,5 +43,18 @@
       "creatorId": 9,
       "id": 2
     }
+  },
+  "labels": {
+    "new": {
+      "name": "documentation"
+    },
+    "existing": {
+      "name": "question",
+      "id": 1
+    },
+    "existing2": {
+      "name": "invalid",
+      "id": 2
+    }
   }
 }
