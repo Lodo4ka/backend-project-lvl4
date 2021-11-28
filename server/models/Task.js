@@ -62,6 +62,36 @@ export default class Task extends Model {
           to: 'statuses.id',
         },
       },
+      labels: {
+        relation: Model.ManyToManyRelation,
+        modelClass: path.join(__dirname, 'Label'),
+        join: {
+          from: 'tasks.id',
+          through: {
+            from: 'tasks_labels.taskId',
+            to: 'tasks_labels.labelId',
+          },
+          to: 'labels.id',
+        },
+      },
     };
   }
+
+  static modifiers = {
+    filterStatus(query, id) {
+      query.where('statusId', id);
+    },
+
+    filterExecutor(query, id) {
+      query.where('executorId', id);
+    },
+
+    filterLabel(query, id) {
+      query.where('labels.id', id);
+    },
+
+    filterCreator(query, id) {
+      query.where('creatorId', id);
+    },
+  };
 }

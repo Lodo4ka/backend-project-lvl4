@@ -43,6 +43,7 @@ describe('test tasks CRUD', () => {
 
   it('POST /tasks', async () => {
     const {
+      labels: { existing: existingLabel },
       tasks: { new: updatedTaskData },
     } = testData;
     const response = await app.inject({
@@ -52,12 +53,15 @@ describe('test tasks CRUD', () => {
       payload: {
         data: {
           ...updatedTaskData,
+          labels: [existingLabel.id],
         },
       },
     });
     expect(response.statusCode).toBe(302);
     const task = await models.task.query().findOne({ name: updatedTaskData.name });
+    const [relatedLabel] = await task.$relatedQuery('labels');
     expect(task).toMatchObject(updatedTaskData);
+    expect(relatedLabel).toMatchObject(existingLabel);
   });
 
   it('GET /tasks/:id/edit', async () => {

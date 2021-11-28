@@ -57,6 +57,20 @@ module.exports = {
           error: 'Не удалось изменить метку',
         },
       },
+      status: {
+        create: {
+          success: 'Статус успешно создан',
+          error: 'Не удалось создать статус',
+        },
+        update: {
+          error: 'Не удалось изменить статус',
+          success: 'Статус успешно изменён',
+        },
+        delete: {
+          error: 'Не удалось удалить статус',
+          success: 'Статус успешно удалён',
+        },
+      },
     },
     layouts: {
       application: {
@@ -136,6 +150,12 @@ module.exports = {
         labels: 'Метки',
         createdAt: 'Дата создания',
         filter: 'Показать',
+      },
+      filters: {
+        status: 'Статус',
+        executor: 'Исполнитель',
+        label: 'Метка',
+        isCreatorUser: 'Только мои задачи',
       },
     },
     form: {

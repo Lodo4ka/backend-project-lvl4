@@ -20,6 +20,13 @@ block content
                 .row.p-1
                     .col= t('views.tasks.createdAt')
                     .col= formatDate(task.createdAt)
+                if task.labels.length > 0
+                    .row.p-1
+                        .col
+                            h6= `${t('views.tasks.labels')}:`
+                            ul
+                                each label in task.labels
+                                    li= label.name
                 .row.p-1
                     .col.d-flex
                         a(class='btn-link btn' href=route('editTask', { id: task.id }))= t('views.manage.edit')

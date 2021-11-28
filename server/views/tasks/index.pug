@@ -2,6 +2,13 @@ extends ../layouts/application.pug
 
 block content
     a.nav-link(href=route('newTask'))= t('views.tasks.create')
+    .jumbotron.p-2
+        +formFor()(action=route('tasks') method='get' class="form-inline")
+            +filterSelect('task', 'status', statuses, filterOptions)
+            +filterSelect('task', 'executor', users, filterOptions)
+            +filterSelect('task', 'label', labels, filterOptions)
+            +checkbox('isCreatorUser', filterOptions)
+            +submit(t('views.tasks.filter'),false)
     table.table.table-striped
         thead
             tr
@@ -10,6 +17,7 @@ block content
                 th= t('views.tasks.status')
                 th= t('views.tasks.author')
                 th= t('views.tasks.executor')
+                th= t('views.tasks.labels')
                 th= t('views.tasks.createdAt')
                 th
         tbody
@@ -24,6 +32,7 @@ block content
                         td= _.get(task.executor, 'email')
                     else
                         td
+                    td=task.labels
                     td= formatDate(task.createdAt)
                     td.d-md-flex
                         a(class='btn-link btn' href=route('editTask', { id: task.id }))= t('views.manage.edit')
