@@ -10,6 +10,7 @@ import fastifyFormbody from 'fastify-formbody';
 import fastifySecureSession from 'fastify-secure-session';
 import fastifyPassport from 'fastify-passport';
 import fastifySensible from 'fastify-sensible';
+import Rollbar from 'rollbar';
 // import fastifyFlash from 'fastify-flash';
 import { plugin as fastifyReverseRoutes } from 'fastify-reverse-routes';
 import fastifyMethodOverride from 'fastify-method-override';
@@ -61,6 +62,21 @@ const setUpStaticAssets = (app) => {
   app.register(fastifyStatic, {
     root: pathPublic,
     prefix: '/assets/',
+  });
+};
+
+const setupRollbar = (app) => {
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
+
+  app.setErrorHandler((err, req, reply) => {
+    req.log.error(err);
+    rollbar.log(err);
+    req.flash('error', err.message);
+    reply.redirect('/');
   });
 };
 
@@ -126,7 +142,7 @@ export default () => {
       prettyPrint: isDevelopment,
     },
   });
-
+  if (isProduction) setupRollbar(app);
   registerPlugins(app);
 
   setupLocalization();

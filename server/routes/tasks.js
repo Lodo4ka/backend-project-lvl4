@@ -1,12 +1,16 @@
 // @ts-check
 
 import i18next from 'i18next';
+import debug from 'debug';
 import { omit } from 'lodash';
+
+const logApp = debug('app:routes:tasks');
 
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
       const { query: filterOptions, user: { id } } = req;
+      logApp('GET tasks req.query %O', req.query);
       const tasksQuery = app.objection.models.task.query()
         .withGraphJoined('[creator, executor, status, labels]');
 
