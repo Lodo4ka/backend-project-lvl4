@@ -32,7 +32,9 @@ block content
                         td= _.get(task.executor, 'email')
                     else
                         td
-                    td=task.labels
+                    td
+                        each label in task.labels
+                            span=label.name
                     td= formatDate(task.createdAt)
                     td.d-md-flex
                         a(class='btn-link btn' href=route('editTask', { id: task.id }))= t('views.manage.edit')

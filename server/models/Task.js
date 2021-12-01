@@ -17,6 +17,7 @@ export default class Task extends Model {
       ...(parsed.statusId && { statusId: Number(parsed.statusId) }),
       ...(parsed.executorId && { executorId: Number(parsed.executorId) }),
       ...(parsed.creatorId && { creatorId: Number(parsed.creatorId) }),
+      ...(parsed.labels && { labels: parsed.labels }),
     };
   }
 

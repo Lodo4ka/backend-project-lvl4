@@ -91,7 +91,10 @@ export default (app) => {
       }
       return reply;
     })
-    .get('/tasks/:id/edit', { name: 'editTask', preValidation: app.authenticate }, async (req, reply) => {
+    .get('/tasks/:id/edit', {
+      name: 'editTask',
+      preValidation: app.authenticate,
+    }, async (req, reply) => {
       const [task, users, statuses, labels] = await Promise.all([
         app.objection.models.task.query().findById(req.params.id)
           .withGraphJoined('[creator, executor, status]'),
