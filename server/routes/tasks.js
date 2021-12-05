@@ -58,7 +58,6 @@ export default (app) => {
             ...omit(req.body.data, ['labels']),
             creatorId: req.user.id,
           });
-          console.log('labelIds', labelIds);
           const labels = [labelIds].flat().map((id) => ({ id: Number(id) }));
           await app.objection.models.task.transaction(async (trx) => {
             await app.objection.models.task.query(trx).allowGraph('labels').insertGraph([{

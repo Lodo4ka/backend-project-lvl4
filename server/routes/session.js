@@ -13,10 +13,12 @@ export default (app) => {
         return app.httpErrors.internalServerError(err);
       }
       if (!user) {
+        console.log('user', user);
         const signInForm = req.body.data;
         const errors = {
           email: [{ message: i18next.t('flash.session.create.error') }],
         };
+        console.log('errors', errors);
         return reply.render('session/new', { signInForm, errors });
       }
       req.session.set('user', user);
