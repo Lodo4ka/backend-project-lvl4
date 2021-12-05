@@ -25,7 +25,6 @@ export default (app) => {
         app.objection.models.status.query(),
         app.objection.models.label.query(),
       ]);
-      // console.log('tasks', tasks);
       reply.render('tasks/index', {
         tasks,
         users,
@@ -67,7 +66,6 @@ export default (app) => {
           req.flash('info', i18next.t('flash.task.create.success'));
           reply.redirect(app.reverse('tasks'));
         } catch (err) {
-          console.log('err', err);
           req.flash('error', i18next.t('flash.task.create.error'));
           const task = new app.objection.models.task().$set(req.body.data);
           const [users, statuses, labels] = await Promise.all([
@@ -133,7 +131,6 @@ export default (app) => {
         .findById(req.params.id);
       try {
         const labels = await app.objection.models.label.query().findByIds(labelIds);
-        console.log('labels', labels);
         const data = await app.objection.models.task.fromJson({
           ...task,
           ...req.body.data,
