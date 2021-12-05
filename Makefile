@@ -29,3 +29,6 @@ test:
 
 test-watch:
 	npm run test-watch -s
+
+test-coverage:
+	npm run test-coverage
