@@ -27,8 +27,8 @@ export default (app) => {
     .post('/users', async (req, reply) => {
       try {
         const user = await app.objection.models.user.fromJson(req.body.data);
-        const builder = await app.objection.models.user.query().insert(user);
-        console.log('builder', builder);
+        console.log('create user', user);
+        await app.objection.models.user.query().insert(user);
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
