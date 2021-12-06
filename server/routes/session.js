@@ -9,6 +9,9 @@ export default (app) => {
       reply.render('session/new', { signInForm });
     })
     .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err, user) => {
+      const users = await app.objection.models.user.query();
+      console.log('user', user);
+      console.log('users', users);
       if (err) {
         return app.httpErrors.internalServerError(err);
       }
