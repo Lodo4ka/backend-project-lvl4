@@ -28,7 +28,8 @@ export default (app) => {
       try {
         const user = await app.objection.models.user.fromJson(req.body.data);
         console.log('create user', user);
-        await app.objection.models.user.query().insert(user);
+        const createdUser = await app.objection.models.user.query().insert(user);
+        console.log('createdUser', createdUser);
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
