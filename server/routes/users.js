@@ -60,16 +60,8 @@ export default (app) => {
       return reply;
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
-      const user = await app.objection.models.user.query().findById(req.user.id);
-      const notExecutedTasks = await user.$relatedQuery('executorTasks');
-      const createdByUserTasks = await user.$relatedQuery('creatorTasks');
-      if (notExecutedTasks.length === 0 && createdByUserTasks.length === 0) {
-        req.logOut();
-        await app.objection.models.user.query().deleteById(req.params.id);
-        req.flash('info', i18next.t('flash.users.delete.success'));
-      } else {
-        req.flash('error', i18next.t('flash.users.delete.error'));
-      }
+      await app.objection.models.user.query().deleteById(req.params.id);
+      req.flash('info', i18next.t('flash.users.delete.success'));
       reply.redirect(app.reverse('users'));
       return reply;
     });
