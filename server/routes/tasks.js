@@ -9,29 +9,32 @@ const logApp = debug('app:routes:tasks');
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
-      const { query: filterOptions, user: { id } } = req;
-      logApp('GET tasks req.query %O', req.query);
-      const tasksQuery = app.objection.models.task.query()
-        .withGraphJoined('[creator, executor, status, labels]');
+      try {
+        const { query: filterOptions, user: { id } } = req;
+        logApp('GET tasks req.query %O', req.query);
+        const tasksQuery = app.objection.models.task.query()
+          .withGraphJoined('[creator, executor, status, labels]');
 
-      if (filterOptions.status) tasksQuery.modify('filterStatus', filterOptions.status);
-      if (filterOptions.executor) tasksQuery.modify('filterExecutor', filterOptions.executor);
-      if (filterOptions.label) tasksQuery.modify('filterLabel', filterOptions.label);
-      if (filterOptions.isCreatorUser) tasksQuery.modify('filterCreator', id);
-
-      const [tasks, users, statuses, labels] = await Promise.all([
-        tasksQuery,
-        app.objection.models.user.query(),
-        app.objection.models.status.query(),
-        app.objection.models.label.query(),
-      ]);
-      reply.render('tasks/index', {
-        tasks,
-        users,
-        statuses,
-        labels,
-        filterOptions,
-      });
+        if (filterOptions.status) tasksQuery.modify('filterStatus', filterOptions.status);
+        if (filterOptions.executor) tasksQuery.modify('filterExecutor', filterOptions.executor);
+        if (filterOptions.label) tasksQuery.modify('filterLabel', filterOptions.label);
+        if (filterOptions.isCreatorUser) tasksQuery.modify('filterCreator', id);
+        const [tasks, users, statuses, labels] = await Promise.all([
+          tasksQuery,
+          app.objection.models.user.query(),
+          app.objection.models.status.query(),
+          app.objection.models.label.query(),
+        ]);
+        reply.render('tasks/index', {
+          tasks,
+          users,
+          statuses,
+          labels,
+          filterOptions,
+        });
+      } catch (err) {
+        console.error('err', err);
+      }
       return reply;
     })
     .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (req, reply) => {
@@ -148,6 +151,7 @@ export default (app) => {
         const taskError = new app.objection.models.task().$set({ ...task, ...req.body.data });
         const [users, statuses, labels] = await Promise.all([
           app.objection.models.user.query(),
+          app.objection.models.status.query(),
           app.objection.models.label.query(),
         ]);
 

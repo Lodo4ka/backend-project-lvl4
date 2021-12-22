@@ -9,8 +9,28 @@ import encrypt from '../lib/secure.js';
 const unique = objectionUnique({ fields: ['email'] });
 
 export default class User extends unique(Model) {
+  static get virtualAttributes() {
+    return ['fullName'];
+  }
+
+  $parseJson(json, options) {
+    const parsed = super.$parseJson(json, options);
+    console.log('parsed', parsed);
+    return {
+      ...parsed,
+      ...(parsed.firstName && { firstName: parsed.firstName.trim() }),
+      ...(parsed.lastName && { lastName: parsed.lastName.trim() }),
+      ...(parsed.email && { email: parsed.email.trim() }),
+      ...(parsed.password && { password: parsed.password.trim() }),
+    };
+  }
+
   static get tableName() {
     return 'users';
+  }
+
+  fullName() {
+    return [this.firstName, this.lastName].join(' ');
   }
 
   static get jsonSchema() {
@@ -21,6 +41,8 @@ export default class User extends unique(Model) {
         id: { type: 'integer' },
         email: { type: 'string', format: 'email' },
         password: { type: 'string', minLength: 3 },
+        firstName: { type: 'string', minLength: 1 },
+        lastName: { type: 'string', minLength: 1 },
       },
     };
   }

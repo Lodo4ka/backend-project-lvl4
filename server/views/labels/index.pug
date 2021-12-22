@@ -15,6 +15,6 @@ block content
                      td= label.id
                      td= label.name
                      td= formatDate(label.createdAt)
-                     td.d-md-flex
+                     td
                          a(class='btn-link btn' href=route('editLabel', { id: label.id }))= t('views.manage.edit')
                          +buttonTo(route('deleteLabel', { id: label.id }), 'delete')(value=t('views.manage.delete') class='btn-link btn')

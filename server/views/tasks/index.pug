@@ -36,6 +36,6 @@ block content
                         each label in task.labels
                             span=label.name
                     td= formatDate(task.createdAt)
-                    td.d-md-flex
+                    td
                         a(class='btn-link btn' href=route('editTask', { id: task.id }))= t('views.manage.edit')
                         +buttonTo(route('deleteTask', { id: task.id }), 'delete')(value=t('views.manage.delete') class='btn-link btn')

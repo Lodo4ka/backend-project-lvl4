@@ -1,6 +1,9 @@
 // @ts-check
 
 import i18next from 'i18next';
+import debug from 'debug';
+
+const logApp = debug('app:routes:users');
 
 export default (app) => {
   app
@@ -17,7 +20,7 @@ export default (app) => {
       const { id } = req.params;
       try {
         const user = await app.objection.models.user.query().findById(id);
-        reply.render('users/:id/edit', { user });
+        reply.render('users/edit', { user });
         return reply;
       } catch (e) {
         req.flash('info', i18next.t('flash.users.update.error'));
@@ -27,30 +30,34 @@ export default (app) => {
     .post('/users', async (req, reply) => {
       try {
         const user = await app.objection.models.user.fromJson(req.body.data);
-        console.log('create user', user);
-        const createdUser = await app.objection.models.user.query().insert(user);
-        console.log('createdUser', createdUser);
+        console.log('user', user);
+        await app.objection.models.user.query().insert(user);
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
-      } catch ({ data }) {
+      } catch (e) {
+        console.log(e);
         req.flash('error', i18next.t('flash.users.create.error'));
-        reply.render('users/new', { user: req.body.data, errors: data });
+        reply.render('users/new', { user: req.body.data, errors: e.data });
         return reply;
       }
     })
-    .patch('/users/:id', { name: 'user' }, async (req, reply) => {
+    .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
       const { id } = req.params;
       const params = req.body.data;
+      logApp('patch req.body.data-> %O', req.body.data);
+      const currentUser = await app.objection.models.user.query()
+        .findById(id);
       try {
-        const currentUser = await app.objection.models.user.query()
-          .findById(id);
-        await currentUser.$query().update({ email: params.email, password: params.password });
+        await currentUser.$query().update(params);
         req.flash('info', i18next.t('flash.users.update.success'));
         reply.redirect(app.reverse('users'));
       } catch (e) {
+        console.log(e);
         req.flash('info', i18next.t('flash.users.update.error'));
+        reply.render('users/edit', { user: currentUser, errors: e.data });
       }
+      return reply;
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
       const { id } = req.params;

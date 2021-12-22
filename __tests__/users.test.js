@@ -70,7 +70,7 @@ describe('test users CRUD', () => {
     };
     const response = await app.inject({
       method: 'PATCH',
-      url: app.reverse('user', { id: user.id }),
+      url: app.reverse('updateUser', { id: user.id }),
       payload: {
         data: params,
       },

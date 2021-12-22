@@ -9,9 +9,6 @@ export default (app) => {
       reply.render('session/new', { signInForm });
     })
     .post('/session', { name: 'session' }, app.fp.authenticate('form', async (req, reply, err, user) => {
-      const users = await app.objection.models.user.query();
-      console.log('user', user);
-      console.log('users', users);
       if (err) {
         return app.httpErrors.internalServerError(err);
       }
@@ -20,9 +17,6 @@ export default (app) => {
         const errors = {
           email: [{ message: i18next.t('flash.session.create.error') }],
         };
-        const user3 = await app.objection.models.user.query().findById(3);
-        console.log('user3', user3);
-        console.log('signInForm', signInForm);
         return reply.render('session/new', { signInForm, errors });
       }
       req.session.set('user', user);
