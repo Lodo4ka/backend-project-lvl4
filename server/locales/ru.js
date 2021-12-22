@@ -110,6 +110,7 @@ module.exports = {
         id: 'ID',
         firstName: 'Имя',
         lastName: 'Фамилия',
+        fullName: 'Полное имя',
         email: 'Email',
         createdAt: 'Дата создания',
         actions: 'Действия',
