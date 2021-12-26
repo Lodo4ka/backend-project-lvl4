@@ -84,6 +84,20 @@ describe('test statuses CRUD', () => {
     expect(status).toMatchObject(updatedData);
   });
 
+  it('DELETE status', async () => {
+    const { existing } = testData.statuses;
+
+    const response = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteStatus', { id: existing.id }),
+      cookies: cookie,
+    });
+    expect(response.statusCode).toBe(302);
+
+    const status2 = await models.status.query().findById(existing.id);
+    expect(status2).toBeUndefined();
+  });
+
   afterEach(async () => {
     // после каждого теста откатываем миграции
     await knex.migrate.rollback();
