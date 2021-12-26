@@ -3,12 +3,13 @@
 import _ from 'lodash';
 import getApp from '../server/index.js';
 import encrypt from '../server/lib/secure.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, signIn } from './helpers/index.js';
 
 describe('test users CRUD', () => {
   let app;
   let knex;
   let models;
+  let cookie;
   const testData = getTestData();
 
   beforeAll(async () => {
@@ -23,6 +24,7 @@ describe('test users CRUD', () => {
     // и заполняем БД тестовыми данными
     await knex.migrate.latest();
     await prepareData(app);
+    cookie = await signIn(app, testData.users.existing);
   });
 
   it('index', async () => {
@@ -48,6 +50,7 @@ describe('test users CRUD', () => {
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('users'),
+      cookies: cookie,
       payload: {
         data: params,
       },
@@ -63,7 +66,8 @@ describe('test users CRUD', () => {
   });
 
   it('update', async () => {
-    const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    // const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    const user = testData.users.existing;
     const params = {
       email: 'test@mail.com',
       password: '123',
@@ -71,6 +75,7 @@ describe('test users CRUD', () => {
     const response = await app.inject({
       method: 'PATCH',
       url: app.reverse('updateUser', { id: user.id }),
+      cookies: cookie,
       payload: {
         data: params,
       },
@@ -85,10 +90,11 @@ describe('test users CRUD', () => {
   });
 
   it('delete', async () => {
-    const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    const user = testData.users.existing3;
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteUser', { id: user.id }),
+      cookies: await signIn(app, user),
     });
     expect(response.statusCode).toBe(302);
     const userDeleted = await models.user.query().findById(user.id);
@@ -100,6 +106,7 @@ describe('test users CRUD', () => {
     const { id: userID } = await models.user.query().findOne({ email: user.email });
     const response = await app.inject({
       method: 'GET',
+      cookies: cookie,
       url: app.reverse('userEdit', { id: userID }),
     });
     expect(response.statusCode).toBe(200);
