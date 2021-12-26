@@ -17,7 +17,7 @@ export default (app) => {
       const user = new app.objection.models.user();
       reply.render('users/new', { user });
     })
-    .get('/users/:id/edit', { name: 'userEdit' }, async (req, reply) => {
+    .get('/users/:id/edit', { name: 'userEdit', preValidation: app.authorize }, async (req, reply) => {
       const { id } = req.params;
       try {
         const user = await app.objection.models.user.query().findById(id);
@@ -41,7 +41,7 @@ export default (app) => {
         return reply;
       }
     })
-    .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
+    .patch('/users/:id', { name: 'updateUser', preValidation: app.authorize }, async (req, reply) => {
       const { id } = req.params;
       const params = req.body.data;
       logApp('patch req.body.data-> %O', req.body.data);
@@ -57,28 +57,26 @@ export default (app) => {
       }
       return reply;
     })
-    .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
-      const { id } = req.params;
+    .delete('/users/:id', { name: 'deleteUser', preValidation: app.authorize }, async (req, reply) => {
+      try {
+        logApp('DELETE req.user %O', req.user);
+        const { id } = req.params;
+        const user = await app.objection.models.user.query().findById(id);
+        const notExecutedTasks = await user.$relatedQuery('executorTasks');
+        const createdByUserTasks = await user.$relatedQuery('creatorTasks');
 
-      if (Number(id) !== req.user.id) {
-        req.flash('error', i18next.t('flash.user.accessError'));
+        if (isEmpty(notExecutedTasks) && isEmpty(createdByUserTasks)) {
+          await app.objection.models.user.query().deleteById(id);
+          await req.logOut();
+          req.flash('info', i18next.t('flash.users.delete.success'));
+        } else {
+          req.flash('error', i18next.t('flash.users.delete.error'));
+        }
+
         reply.redirect(app.reverse('users'));
-        return reply;
+      } catch (e) {
+        console.log('custom_error', e);
       }
-      const user = await app.objection.models.user.query().findById(id);
-      const taskCreator = await user.$relatedQuery('createdTasks');
-      const taskExecutor = await user.$relatedQuery('assignedTasks');
-
-      if (isEmpty(taskCreator) && isEmpty(taskExecutor)) {
-        await app.objection.models.user.query().deleteById(id);
-        await req.logOut();
-        req.flash('info', i18next.t('flash.user.delete.success'));
-      } else {
-        req.flash('error', i18next.t('flash.user.delete.error'));
-      }
-
-      reply.redirect(app.reverse('users'));
-
       return reply;
     });
 };
