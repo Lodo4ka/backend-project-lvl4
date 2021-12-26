@@ -8,9 +8,13 @@ block content
                 th= t('views.statuses.id')
                 th= t('views.statuses.name')
                 th= t('views.statuses.createdAt')
+                th= t('views.users.actions')
         tbody
             each status in statuses
                 tr
                     td= status.id
                     td= status.name
                     td= formatDate(status.createdAt)
+                    td
+                        a(class='btn-link btn' href=route('editStatus', { id: status.id }))= t('views.manage.edit')
+                        +buttonTo(route('deleteStatus', { id: status.id }), 'delete')(value=t('views.manage.delete') class='btn-link btn')

@@ -1,6 +1,9 @@
 // @ts-check
 
 import i18next from 'i18next';
+import debug from 'debug';
+
+const logApp = debug('app:routes:statuses');
 
 export default (app) => {
   app
@@ -8,7 +11,7 @@ export default (app) => {
       const statuses = await app.objection.models.status.query();
       reply.render('statuses/index', { statuses });
     })
-    .get('/status/new', { name: 'newStatus' }, async (req, reply) => {
+    .get('/statuses/new', { name: 'newStatus' }, async (req, reply) => {
       const status = await new app.objection.models.status();
       reply.render('statuses/new', { status });
     })
@@ -19,13 +22,14 @@ export default (app) => {
         req.flash('info', i18next.t('flash.status.create.success'));
         reply.redirect(app.reverse('statuses'));
       } catch (error) {
+        logApp('post error %O', error);
         req.flash('error', i18next.t('flash.status.create.error'));
         const status = new app.objection.models.status().$set(req.body.data);
         reply.render(app.reverse('newStatus'), { status, errors: error.data });
         reply.code(422);
       }
     })
-    .get('/status/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
+    .get('/statuses/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
       const { id } = req.params;
       const status = await app.objection.models.status.query().findById(id);
       reply.render('statuses/edit', { status });
@@ -44,5 +48,19 @@ export default (app) => {
         reply.render('statuses/edit', { status, errors: err.data });
         reply.code(422);
       }
+    })
+
+    .delete('/statuses/:id', { name: 'deleteStatus', preValidation: app.authenticate }, async (req, reply) => {
+      const status = await app.objection.models.status.query().findById(req.params.id);
+      const tasks = await status.$relatedQuery('tasks');
+      logApp('DELETE statuses - number of tasks dependents %O', tasks.length);
+      if (tasks.length === 0) {
+        await app.objection.models.status.query().deleteById(req.params.id);
+        req.flash('info', i18next.t('flash.status.delete.success'));
+      } else {
+        req.flash('error', i18next.t('flash.status.delete.error'));
+      }
+      reply.redirect(app.reverse('statuses'));
+      return reply;
     });
 };
