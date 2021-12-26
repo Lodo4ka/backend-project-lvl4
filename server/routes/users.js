@@ -2,6 +2,7 @@
 
 import i18next from 'i18next';
 import debug from 'debug';
+import { isEmpty } from 'lodash';
 
 const logApp = debug('app:routes:users');
 
@@ -57,9 +58,27 @@ export default (app) => {
       return reply;
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
-      await app.objection.models.user.query().deleteById(req.params.id);
-      req.flash('info', i18next.t('flash.users.delete.success'));
+      const { id } = req.params;
+
+      if (Number(id) !== req.user.id) {
+        req.flash('error', i18next.t('flash.user.accessError'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+      const user = await app.objection.models.user.query().findById(id);
+      const taskCreator = await user.$relatedQuery('createdTasks');
+      const taskExecutor = await user.$relatedQuery('assignedTasks');
+
+      if (isEmpty(taskCreator) && isEmpty(taskExecutor)) {
+        await app.objection.models.user.query().deleteById(id);
+        await req.logOut();
+        req.flash('info', i18next.t('flash.user.delete.success'));
+      } else {
+        req.flash('error', i18next.t('flash.user.delete.error'));
+      }
+
       reply.redirect(app.reverse('users'));
+
       return reply;
     });
 };
