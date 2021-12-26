@@ -59,6 +59,8 @@ mixin select(entity, propertyName, errors = {}, items, multiple = false)
       multiple=multiple
       class=classLine
     )
+      if !multiple
+          option
       each item in items
         - isSelect = _.includes(selectedOptions, item.id)
         option(value=item.id, selected= isSelect)= item.name || item.email
