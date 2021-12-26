@@ -63,7 +63,7 @@ mixin select(entity, propertyName, errors = {}, items, multiple = false)
           option
       each item in items
         - isSelect = _.includes(selectedOptions, item.id)
-        option(value=item.id, selected= isSelect)= item.name || item.email
+        option(value=item.id, selected= isSelect)= item.name || item.fullName()
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
