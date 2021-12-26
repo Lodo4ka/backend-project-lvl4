@@ -104,7 +104,7 @@ export default (app) => {
     }, async (req, reply) => {
       const [task, users, statuses, labels] = await Promise.all([
         app.objection.models.task.query().findById(req.params.id)
-          .withGraphJoined('[creator, executor, status]'),
+          .withGraphJoined('[creator, executor, status, labels]'),
         app.objection.models.user.query(),
         app.objection.models.status.query(),
         app.objection.models.label.query(),
@@ -132,19 +132,25 @@ export default (app) => {
       return reply;
     })
     .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
+      logApp('updateTask req.params %O', req.params);
       const labelIds = req.body.data.labels ?? [];
+      const { id: taskId } = req.params;
+      const { data: formData } = req.body;
+      logApp('updateTask req.body.data %O', req.body.data);
       const task = await app.objection.models.task.query()
         .findById(req.params.id);
       try {
-        const labels = await app.objection.models.label.query().findByIds(labelIds);
-        const data = await app.objection.models.task.fromJson({
-          ...task,
-          ...req.body.data,
-          labels,
-        });
+        const data = {
+          id: Number(taskId),
+          creatorId: task.creatorId,
+          statusId: Number(formData.statusId),
+          name: formData.name,
+          description: formData.description,
+          executorId: !formData.executorId ? null : Number(formData.executorId),
+          labels: labelIds.map((labelId) => ({ id: labelId })),
+        };
         await app.objection.models.task.transaction(async (trx) => {
           await app.objection.models.task.query(trx)
-            .allowGraph('labels')
             .upsertGraph(data, { relate: true, unrelate: true, noDelete: true });
         });
         req.flash('info', i18next.t('flash.task.update.success'));
