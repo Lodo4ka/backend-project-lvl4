@@ -81,7 +81,7 @@ mixin filterSelect(entity, propertyName, items, filterOptions)
       option(selected= true)
       each item in items
         - isSelect = filterOptions[propertyName] == item.id
-        option(value=item.id, selected= isSelect)= item.name || item.email
+        option(value=item.id, selected= isSelect)= item.name || item.fullName()
 
 mixin buttonTo(action, method)
   form(action=action, method="post")
