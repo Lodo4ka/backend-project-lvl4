@@ -44,6 +44,9 @@ export default (app) => {
         app.objection.models.status.query(),
         app.objection.models.label.query(),
       ]);
+      console.log('users', users);
+      console.log('statuses', statuses);
+      console.log('labels', labels);
       reply.render('tasks/new', {
         task,
         users,
