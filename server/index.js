@@ -27,6 +27,7 @@ import getHelpers from './helpers/index.js';
 import knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
+import AuthorizeStrategy from './lib/passportStrategies/AuthorizeStrategy.js';
 
 dotenv.config();
 const mode = process.env.NODE_ENV || 'development';
@@ -117,6 +118,7 @@ const registerPlugins = (app) => {
   );
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
   fastifyPassport.use(new FormStrategy('form', app));
+  fastifyPassport.use(new AuthorizeStrategy('permissions'));
   app.register(fastifyPassport.initialize());
   app.register(fastifyPassport.secureSession());
   app.decorate('fp', fastifyPassport);
@@ -127,6 +129,14 @@ const registerPlugins = (app) => {
       failureFlash: i18next.t('flash.authError'),
     },
   // @ts-ignore
+  )(...args));
+  app.decorate('authorize', (...args) => fastifyPassport.authenticate(
+    'permissions',
+    {
+      failureRedirect: app.reverse('users'),
+      failureFlash: i18next.t('flash.users.authError'),
+    },
+    // @ts-ignore
   )(...args));
 
   app.register(fastifyMethodOverride);
