@@ -15,7 +15,6 @@ export default class User extends unique(Model) {
 
   $parseJson(json, options) {
     const parsed = super.$parseJson(json, options);
-    console.log('parsed', parsed);
     return {
       ...parsed,
       ...(parsed.firstName && { firstName: parsed.firstName.trim() }),
